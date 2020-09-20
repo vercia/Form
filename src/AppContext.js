@@ -1,9 +1,9 @@
-import React, { useState,useContext } from 'react';
-import Input from './Input';
-import PRACOWNICY from './PRACOWNICY'
-import './App.css';
+import React, { createContext, useState } from 'react';
+import PRACOWNICY from './PRACOWNICY';
 
-const App = () => {
+export const AppContext = createContext();
+
+const AppContextProvider = (props) => {
   const [workers, setWorkers] = useState(PRACOWNICY);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -110,25 +110,6 @@ const App = () => {
     });
   };
 
-  const addNewWorker = (e) => {
-    e.preventDefault()
-    const newItem = {
-      imie: name,
-      nazwisko: surname,
-      dzial: section,
-      wynagrodzenieKwota: salary,
-      wynagrodzenieWaluta: currency
-    };
-    const newList = [...workers];
-    newList.push(newItem);
-    setWorkers(newList);
-    setName('');
-    setSurname('');
-    setSection('');
-    setSalary('');
-    setCurrency('');
-  };
-
   const sumValueOfSection = () => {
     var arrIT = [];
     var arrAdmin = [];
@@ -153,7 +134,7 @@ const App = () => {
     let sumTotal = sumIT + sumAdmin + arrBus[0];
 
     return (
-      <div className='p-container' >
+      <div className='p-container'>
         <p>IT: {sumIT} PLN</p>
         <p>Administracja: {sumAdmin} PLN</p>
         <p>Handlowiec: {arrBus[0]} PLN</p>
@@ -162,50 +143,59 @@ const App = () => {
     );
   };
 
+  const addNewWorker = (e) => {
+    e.preventDefault();
+    const newItem = {
+      imie: name,
+      nazwisko: surname,
+      dzial: section,
+      wynagrodzenieKwota: salary,
+      wynagrodzenieWaluta: currency
+    };
+    const newList = [...workers];
+    newList.push(newItem);
+    setWorkers(newList);
+    setName('');
+    setSurname('');
+    setSection('');
+    setSalary('');
+    setCurrency('');
+  };
+
   return (
-      <div className='App'>
-        <h1>Pracownicy</h1>
-        <div style={{ width: '100vw' }}>
-          {inputSearch.map((item) => (
-            <Input
-              type={item.type}
-              value={item.value}
-              set={item.set}
-              placeholder={item.placeholder}
-              key={item.placeholder}
-            />
-          ))}
-          <select value={select} onChange={(e) => setSelect(e.target.value)}>
-            <option value=''>Wybierz dział</option>
-            <option value='IT'>IT</option>
-            <option value='Administracja'>Administracja</option>
-            <option value='Handlowiec'>Handlowiec</option>
-          </select>
-        </div>
-        <table>
-          <tbody>
-            <tr>{renderTableHeader()}</tr>
-            {renderTableData()}
-          </tbody>
-        </table>
-        {sumValueOfSection()}
-        <form
-          style={{ display: 'flex', flexDirection: 'column', width: '20%' }}
-          onSubmit={addNewWorker}
-        >
-          {inputList.map((item) => (
-            <Input
-              type={item.type}
-              value={item.value}
-              set={item.set}
-              placeholder={item.placeholder}
-              key={item.placeholder}
-            />
-          ))}
-          <button type='submit'>DODAJ</button>
-        </form>
-      </div>
+    <AppContext.Provider
+      value={{
+        setWorkers,
+        setName,
+        setSurname,
+        setSalary,
+        setCurrency,
+        setSection,
+        name,
+        surname,
+        section,
+        salary,
+        currency,
+        addNewWorker,
+        workers,
+        sumValueOfSection,
+        renderTableData,
+        renderTableHeader,
+        select,
+        setSelect,
+        word,
+        setWord,
+        inputFrom,
+        setInputFrom,
+        inputTo,
+        setInputTo,
+        inputList,
+        inputSearch
+      }}
+    >
+      {props.children}
+    </AppContext.Provider>
   );
 };
 
-export default App;
+export default AppContextProvider;
