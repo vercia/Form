@@ -1,9 +1,11 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useContext } from 'react';
 import PRACOWNICY from './PRACOWNICY';
 
-export const AppContext = createContext();
+const AppContext = createContext();
 
-const AppContextProvider = (props) => {
+const { Provider } = AppContext;
+
+const AppContextProvider = props => {
   const [workers, setWorkers] = useState(PRACOWNICY);
   const [name, setName] = useState('');
   const [surname, setSurname] = useState('');
@@ -163,7 +165,7 @@ const AppContextProvider = (props) => {
   };
 
   return (
-    <AppContext.Provider
+    <Provider
       value={{
         setWorkers,
         setName,
@@ -194,8 +196,12 @@ const AppContextProvider = (props) => {
       }}
     >
       {props.children}
-    </AppContext.Provider>
+    </Provider>
   );
+};
+
+export const useTableContext = () => {
+  return useContext(AppContext);
 };
 
 export default AppContextProvider;
